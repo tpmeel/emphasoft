@@ -1,5 +1,4 @@
-import * as Yup from 'yup'
-import React, { useState } from 'react'
+import React, { useState, FC } from 'react'
 import { useSnackbar } from 'notistack'
 import {
     Grid,
@@ -15,6 +14,8 @@ import { Form } from 'react-final-form'
 import { useTheme } from '@mui/material/styles'
 import { useNavigate } from 'react-router-dom'
 
+import * as Yup from 'yup'
+
 import { FORM_FIELDS_VALIDATION_ERRORS_LOCALIZATION } from '../../../defs/validation'
 import { FINAL_FORMS_SUBSCRIPTION } from '../../../defs/forms'
 import { FieldName, FormData } from '../types'
@@ -22,7 +23,7 @@ import { useLoginMutation } from "../../../api/Login/Login";
 import { canStepNextInWizard } from '../../../utils/forms'
 import { isDefined } from '../../../utils/object'
 
-import loginFormStyle from './styles'
+import FormStyle from "../../../styles/formStyle";
 
 Yup.setLocale(FORM_FIELDS_VALIDATION_ERRORS_LOCALIZATION)
 
@@ -34,11 +35,12 @@ const schema: Yup.Schema<FormData> = Yup.object().shape({
 const validate = makeValidate(schema)
 const required = makeRequired(schema)
 
-const LoginForm: React.FC = () => {
+const LoginForm: FC = () => {
     const theme = useTheme()
+    const styles = FormStyle(theme)
+
     const navigate = useNavigate()
     const { enqueueSnackbar } = useSnackbar()
-    const styles = loginFormStyle(theme)
 
     const [
         login,
@@ -86,12 +88,12 @@ const LoginForm: React.FC = () => {
                         >
                             <Grid item xs={12}>
                                 <Typography sx={styles.typographyLabel}>
-                                    Имя пользователя
+                                    Логин пользователя
                                 </Typography>
                                 <TextField
                                     id={FieldName.username}
                                     sx={styles.textField}
-                                    label="Email"
+                                    label="Логин"
                                     name={FieldName.username}
                                     required={required[FieldName.username]}
                                 />

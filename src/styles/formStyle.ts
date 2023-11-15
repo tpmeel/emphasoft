@@ -1,6 +1,6 @@
 import { Theme } from '@mui/material'
 
-const loginFormStyle = (theme: Theme) => ({
+const FormStyle = (theme: Theme) => ({
     typographyLabel: {
         fontWeight: 500,
         fontSize: theme.typography.pxToRem(13),
@@ -25,4 +25,4 @@ const loginFormStyle = (theme: Theme) => ({
     },
 })
 
-export default loginFormStyle
+export default FormStyle

@@ -8,6 +8,7 @@ import {
     Button,
     Box
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 import { IUser } from "../../../api/Users/types";
 
@@ -17,7 +18,15 @@ interface IUsersCard {
     user: IUser
 }
 
-const UsersCard: React.FC<IUsersCard> = ({ user }) => {
+const UsersCard: React.FC<IUsersCard> = ({
+    user
+}) => {
+
+    const navigate = useNavigate()
+
+    const redirect = () => {
+        navigate(`/users/${user.id}`)
+    }
 
     const theme = useTheme()
     const styles = UsersCardStyle(theme)
@@ -35,7 +44,10 @@ const UsersCard: React.FC<IUsersCard> = ({ user }) => {
             <CardActions>
                 <Box sx={styles.box}>
                     <Box sx={styles.boxInner}>
-                        <Button variant={'contained'}>
+                        <Button
+                            variant={'contained'}
+                            onClick={redirect}
+                        >
                             Редактировать пользователя
                         </Button>
                     </Box>

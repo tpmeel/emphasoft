@@ -5,6 +5,7 @@ import Login from "../containers/Login/Login";
 import AuthGuard from "../containers/AuthGuard/AuthGuard";
 import MainLayout from "../containers/MainLayout/MainLayout";
 import Users from "../containers/Users/Users";
+import User from "../containers/User/User";
 
 const Router = () => {
     return useRoutes([
@@ -19,6 +20,10 @@ const Router = () => {
                 {
                     path: 'users',
                     element: <Users />,
+                },
+                {
+                    path: 'users/:userId',
+                    element: <User />,
                 },
             ],
         },
