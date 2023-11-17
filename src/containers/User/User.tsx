@@ -1,7 +1,8 @@
 import React from 'react'
-import {Grid, Typography} from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 
 import { useParams } from "react-router-dom";
+
 import { useGetUserQuery } from "../../api/Users/Users";
 import UserForm from "./UserForm/UserForm";
 import MProgress from "../../components/MUI/MProgress/MProgress";

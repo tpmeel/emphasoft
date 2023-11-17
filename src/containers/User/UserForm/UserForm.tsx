@@ -1,17 +1,8 @@
 import React, { FC } from "react";
 import { Form } from "react-final-form";
-import {
-    makeRequired,
-    makeValidate,
-    TextField,
-    Switches
-} from "mui-rff";
+import { makeRequired, makeValidate, Switches, TextField } from "mui-rff";
 import { LoadingButton } from "@mui/lab";
-import {
-    Grid,
-    Stack,
-    Typography
-} from "@mui/material";
+import { Grid, Stack, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useSnackbar } from "notistack";
 
@@ -20,10 +11,10 @@ import { FieldName, FormData } from '../types'
 import { FINAL_FORMS_SUBSCRIPTION } from "../../../defs/forms";
 import { FORM_FIELDS_VALIDATION_ERRORS_LOCALIZATION } from "../../../defs/validation";
 import { canStepNextInWizard } from "../../../utils/forms";
-import { usePutUserMutation } from "../../../api/Users/Users";
+import { useCreateUserMutation, usePutUserMutation } from "../../../api/Users/Users";
+import FormStyle from "../../../styles/formStyle";
 
 import * as Yup from "yup";
-import FormStyle from "../../../styles/formStyle";
 
 interface IUserForm {
     isNewUser: boolean
@@ -38,17 +29,17 @@ const getCharacterValidationError = (str: string) => {
 };
 
 const schema: Yup.Schema<FormData> = Yup.object().shape({
-    [FieldName.username]: Yup.string().required(),
-    [FieldName.first_name]: Yup.string(),
-    [FieldName.last_name]: Yup.string(),
-    [FieldName.password]: Yup.string()
-        .required()
-        .min(9, "Пароль должен содержать минимум 9 символов. ")
-        .matches(/[0-9]/, getCharacterValidationError("- цифру. "))
-        .matches(/[a-z]/, getCharacterValidationError("в нижнем регистре (латиница). "))
-        .matches(/[A-Z]/, getCharacterValidationError("в верхнем регистре (латиница). ")),
-    [FieldName.is_active]: Yup.boolean().required()
-})
+        [FieldName.username]: Yup.string().required(),
+        [FieldName.first_name]: Yup.string(),
+        [FieldName.last_name]: Yup.string(),
+        [FieldName.password]: Yup.string()
+            .required()
+            .min(9, "Пароль должен содержать минимум 9 символов. ")
+            .matches(/[0-9]/, getCharacterValidationError("- цифру. "))
+            .matches(/[a-z]/, getCharacterValidationError("в нижнем регистре (латиница). "))
+            .matches(/[A-Z]/, getCharacterValidationError("в верхнем регистре (латиница). ")),
+        [FieldName.is_active]: Yup.boolean()
+    })
 
 const validate = makeValidate(schema)
 const required = makeRequired(schema)
@@ -67,11 +58,18 @@ const UserForm: FC<IUserForm> = ({
     const [
         putUser,
         {
-            isLoading
+            isLoading: isLoadingPutUser
         }
     ] = usePutUserMutation()
 
-    const initialValues: Partial<FormData> = user
+    const [
+        createUser,
+        {
+            isLoading: isLoadingCreateUser
+        }
+    ] = useCreateUserMutation()
+
+    const initialValues: Partial<FormData> = !isNewUser && user
         ? {
             [FieldName.username]: user.username,
             [FieldName.first_name]: user.first_name || '',
@@ -89,8 +87,14 @@ const UserForm: FC<IUserForm> = ({
             } else {
                 enqueueSnackbar('Пользователь изменен', { variant: 'success' })
             }
+        } else {
+            const returnedFromAPIVal = await createUser({ values })
+            if ('error' in returnedFromAPIVal) {
+                enqueueSnackbar('Произошла ошибка', { variant: 'error' })
+            } else {
+                enqueueSnackbar('Пользователь создан', { variant: 'success' })
+            }
         }
-        // TODO: добавить добавление пользователя
     }
 
     return(
@@ -172,7 +176,7 @@ const UserForm: FC<IUserForm> = ({
                             </Grid>
                             <LoadingButton
                                 id="loginButton"
-                                loading={isLoading}
+                                loading={isLoadingPutUser || isLoadingCreateUser}
                                 variant="contained"
                                 color="primary"
                                 type="submit"

@@ -1,5 +1,5 @@
 import { emptySplitApi } from '../base'
-import { IUser, UserId, IPutUserProps } from './types'
+import { IUser, UserId, IPutUserProps, ICreateUserProps } from './types'
 
 const userApi = emptySplitApi.injectEndpoints({
     endpoints: (build) => ({
@@ -9,11 +9,24 @@ const userApi = emptySplitApi.injectEndpoints({
         getUser: build.query<IUser, UserId>({
             query: (id) => `/v1/users/${id}`,
         }),
+        createUser: build.mutation<IUser, ICreateUserProps>({
+            query: ({ values }) => ({
+                url: `/v1/users/`,
+                method: 'POST',
+                body: values,
+            }),
+        }),
         putUser: build.mutation<IUser, IPutUserProps>({
             query: ({ values, id }) => ({
                 url: `/v1/users/${id}`,
                 method: 'PUT',
                 body: values,
+            }),
+        }),
+        deleteUser: build.mutation<void, UserId>({
+            query: (id) => ({
+                url: `/v1/users/${id}`,
+                method: 'DELETE',
             }),
         })
     }),
@@ -25,5 +38,7 @@ export const {
     },
     useGetUserQuery,
     useGetUsersQuery,
-    usePutUserMutation
+    useCreateUserMutation,
+    usePutUserMutation,
+    useDeleteUserMutation
 } = userApi

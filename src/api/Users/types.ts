@@ -16,3 +16,7 @@ export interface IPutUserProps {
     values: FormData
     id: string
 }
+
+export interface ICreateUserProps {
+    values: FormData
+}

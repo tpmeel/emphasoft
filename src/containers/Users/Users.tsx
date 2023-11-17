@@ -18,6 +18,7 @@ import UsersCard from "./UsersCard/UsersCard";
 import { IUser } from "../../api/Users/types";
 
 import UsersStyle from "./styles";
+import {useNavigate} from "react-router-dom";
 
 enum SortType {
     ascSort = 'ascSort',
@@ -25,6 +26,12 @@ enum SortType {
 }
 
 const Users: React.FC = () => {
+    const navigate = useNavigate()
+
+    const redirect = () => {
+        navigate('/users/newUser')
+    }
+
     const styles = UsersStyle()
 
     const [filter, setFilter] = useState<string>('')
@@ -32,7 +39,8 @@ const Users: React.FC = () => {
 
     const {
         isFetching,
-        data
+        data,
+        refetch
     } = useGetUsersQuery(
         undefined,
         { refetchOnMountOrArgChange: true }
@@ -86,7 +94,12 @@ const Users: React.FC = () => {
                 justifyContent='space-between'
             >
                 <Grid item md={6} sm={12} xs={12}>
-                    <Button variant={'contained'}>Создать пользователя</Button>
+                    <Button
+                        variant={'contained'}
+                        onClick={redirect}
+                    >
+                        Создать пользователя
+                    </Button>
                 </Grid>
                 <Grid
                     item
@@ -131,7 +144,7 @@ const Users: React.FC = () => {
                     {
                         sortedAndFilteredData.map((user) => (
                             <Grid item xs={12} key={user.id}>
-                                <UsersCard user={user} />
+                                <UsersCard user={user} refetch={refetch} />
                             </Grid>
                         ))
                     }
